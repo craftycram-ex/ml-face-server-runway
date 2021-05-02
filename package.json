@@ -11,5 +11,11 @@
     },
     "author": "MArc",
     "license": "ISC",
-    "comment": "created with the vscode Let's Hassel extension"
+    "comment": "created with the vscode Let's Hassel extension",
+    "devDependencies": {
+        "eslint": "^7.25.0"
+    },
+    "dependencies": {
+        "axios": "^0.21.1"
+    }
 }
