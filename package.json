@@ -1,0 +1,15 @@
+{
+    "name": "face-server",
+    "version": "0.0.0",
+    "description": "",
+    "main": "src/index.js",
+    "scripts": {
+        "test": "echo \"Error: no test specified\" && exit 1",
+        "start": "node src",
+        "dev": "nodemon src",
+        "lint": "eslint src"
+    },
+    "author": "MArc",
+    "license": "ISC",
+    "comment": "created with the vscode Let's Hassel extension"
+}
