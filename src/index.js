@@ -1,22 +1,26 @@
-const { default: axios } = require("axios");
+const axios = require('axios');
 const ws = require('ws');
 
+// declare variables to store runway output
 let ownerCount = 0;
 let peopleCount = 0;
 
+// define runway webserver ports & ip
 const host = 'http://localhost';
 const portFaces = 8001;
 const portIdentify = 8000;
 
+// start a local websocket server
 const WebSocket = require('ws');
-
 const wss = new WebSocket.Server({ port: 81 });
-
 let wssClients = [];
 
-wss.on('connection', function connection(ws) {
+// handle websocket connections
+// add & remove clients in store
+wss.on('connection', (ws) => {
+  ws.send('howdy client');
   wssClients.push(ws);
-  ws.on('message', function incoming(message) {
+  ws.on('message', (message) => {
     console.log('received: %s', message);
   });
   ws.on('close', () => {
@@ -27,36 +31,35 @@ wss.on('connection', function connection(ws) {
     console.log('errored. removing client');
     wssClients.filter((e) => e === wss);
   });
-  ws.send('something');
 });
 
+// repetitively get data from runway each second
 setInterval(() => {
+  // get if owner is in camera
   axios.get(`${host}:${portIdentify}/data`).then((res) => {
-    /// console.log(res.data.results.length);
     ownerCount = res.data.results.length;
-    if (res.data.results.length > 0) {
-      // console.log('Besitzer erkannt!');
-    }
   });
+  // get amount of total persons in camera
   axios.get(`${host}:${portFaces}/data`).then((res) => {
-    // console.log(res.data);
     peopleCount = res.data.results.length;
   });
+  // check for all owner / stranger combinations
   if (ownerCount === 0 && peopleCount > 0) {
     console.log('Alarm! Unbekannte Person');
     setLED(3);
   } else if (ownerCount > 0 && peopleCount > 1) {
-    setLED(2);
     console.log('Besuch! Hoffentlich alle negativ.');
+    setLED(2);
   } else if (ownerCount > 0 && peopleCount > 0) {
-    setLED(1);
     console.log('Howdy Howy.');
+    setLED(1);
   } else {
-    setLED(0);
     console.log('Keiner Zuhause!');
+    setLED(0);
   }
 }, 1000);
 
+// send led state to all clients
 function setLED(state) {
   wssClients.forEach((c) => {
     c.send(state);
