@@ -1,5 +1,4 @@
 const axios = require('axios');
-const ws = require('ws');
 
 // declare variables to store runway output
 let ownerCount = 0;
